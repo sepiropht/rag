@@ -3,8 +3,13 @@ import OpenAI from 'openai';
 import { ChunkingStrategy } from './site-detector.service';
 import { AdaptiveChunkerService } from './adaptive-chunker.service';
 
-// Use OpenRouter for both embeddings and chat
-const openai = new OpenAI({
+// Use OpenAI directly for embeddings (OpenRouter doesn't support embeddings API)
+const openaiEmbeddings = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// Use OpenRouter for chat completions
+const openRouterChat = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY,
   baseURL: 'https://openrouter.ai/api/v1',
 });
@@ -74,8 +79,8 @@ export class RAGService {
       const chunk = chunks[i];
 
       try {
-        const response = await openai.embeddings.create({
-          model: 'openai/text-embedding-3-small',
+        const response = await openaiEmbeddings.embeddings.create({
+          model: 'text-embedding-3-small',
           input: chunk.content,
         });
 
@@ -101,8 +106,8 @@ export class RAGService {
    * Create embedding for a single text using OpenAI
    */
   static async createEmbedding(text: string): Promise<number[]> {
-    const response = await openai.embeddings.create({
-      model: 'openai/text-embedding-3-small',
+    const response = await openaiEmbeddings.embeddings.create({
+      model: 'text-embedding-3-small',
       input: text,
     });
 
@@ -243,7 +248,7 @@ export class RAGService {
       },
     ];
 
-    const response = await openai.chat.completions.create({
+    const response = await openRouterChat.chat.completions.create({
       model: 'anthropic/claude-3.5-sonnet',
       messages,
     });
