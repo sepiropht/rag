@@ -3,6 +3,9 @@ import prisma from '@/lib/prisma';
 import { ScraperService } from '@/lib/services/scraper.service';
 import { RAGService } from '@/lib/services/rag.service';
 
+// Force dynamic rendering to avoid build-time execution
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const websites = await prisma.website.findMany({

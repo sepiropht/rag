@@ -21,10 +21,77 @@ An open-source Retrieval-Augmented Generation (RAG) system that allows you to ch
 
 ## Prerequisites
 
-- Node.js 18+ or Bun
-- OpenRouter API key (get one at https://openrouter.ai/)
+- Docker & Docker Compose (for Docker setup)
+- Node.js 18+ or Bun (for local development)
+- OpenRouter API key - Get one free at [https://openrouter.ai/](https://openrouter.ai/)
+
+## Quick Start (Docker)
+
+The fastest way to try the project:
+
+```bash
+# Clone the repo
+git clone <your-repo-url>
+cd rag-open-source
+
+# Set up your API key
+cp .env.example .env
+# Edit .env and add your OpenRouter API key from https://openrouter.ai/
+
+# Start with Docker
+docker compose up -d
+
+# Open http://localhost:3000 in your browser
+# Add a website URL and start chatting!
+```
+
+**Useful commands:**
+
+```bash
+# View logs
+docker compose logs -f
+
+# Stop the application
+docker compose down
+
+# Rebuild after changes
+docker compose up -d --build
+```
 
 ## Getting Started
+
+### Option 1: Docker (Recommended)
+
+1. **Clone the repository**
+
+```bash
+git clone <your-repo-url>
+cd rag-open-source
+```
+
+2. **Set up environment variables**
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and add your [OpenRouter API key](https://openrouter.ai/):
+
+```env
+OPENROUTER_API_KEY=your_openrouter_api_key_here
+```
+
+3. **Run with Docker Compose**
+
+```bash
+docker compose up -d
+```
+
+The application will be available at [http://localhost:3000](http://localhost:3000).
+
+The database and transformer models cache are persisted in volumes, so your data will be preserved between restarts.
+
+### Option 2: Local Development
 
 1. **Clone the repository**
 
@@ -43,7 +110,11 @@ npm install
 
 3. **Set up environment variables**
 
-Create a `.env` file in the root directory:
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and add your OpenRouter API key:
 
 ```env
 OPENROUTER_API_KEY=your_openrouter_api_key_here
@@ -74,32 +145,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 3. **Chat**: Once processing is complete, click on the website card to start chatting
 4. **Ask Questions**: Ask questions about the website content and get AI-powered answers
 
-## Architecture
-
-### Website Processing Pipeline
-
-1. **Scraping** (`scraper.service.ts`):
-   - Finds sitemap or crawls pages
-   - Extracts content using Puppeteer and Cheerio
-
-2. **Site Detection** (`site-detector.service.ts`):
-   - Detects website type (blog, docs, e-commerce, etc.)
-   - Determines optimal chunking strategy
-
-3. **Chunking** (`adaptive-chunker.service.ts`):
-   - Splits content into chunks based on site type
-   - Respects semantic boundaries (paragraphs, sections, headings)
-
-4. **Embedding** (`rag.service.ts`):
-   - Generates embeddings using OpenAI's `text-embedding-3-small`
-   - Stores in database for fast retrieval
-
-### Chat Pipeline
-
-1. **Query**: User asks a question
-2. **Retrieval**: System finds most relevant chunks using cosine similarity
-3. **Generation**: OpenAI GPT-4o-mini generates answer based on context
-4. **Response**: Answer is displayed in the chat interface
+For a detailed explanation of how RAG works and the technical architecture, check out the blog post: [Building an Open-Source RAG System](https://elimbi.com)
 
 ## Project Structure
 

@@ -1,14 +1,8 @@
 import prisma from '../prisma';
 import OpenAI from 'openai';
-import { pipeline, env } from '@xenova/transformers';
 import * as path from 'path';
 import { ChunkingStrategy } from './site-detector.service';
 import { AdaptiveChunkerService } from './adaptive-chunker.service';
-
-// Configure transformers to use local cache
-env.allowLocalModels = false;
-env.useBrowserCache = false;
-env.cacheDir = path.join(process.cwd(), '.cache', 'transformers');
 
 // Use OpenRouter for chat completions
 const openRouterChat = new OpenAI({
@@ -41,6 +35,15 @@ export class RAGService {
   static async initEmbedder() {
     if (!this.embedder) {
       console.log('Loading sentence-transformers model (all-MiniLM-L6-v2)...');
+
+      // Dynamic import to avoid build-time issues with onnxruntime
+      const { pipeline, env } = await import('@xenova/transformers');
+
+      // Configure transformers to use local cache
+      env.allowLocalModels = false;
+      env.useBrowserCache = false;
+      env.cacheDir = path.join(process.cwd(), '.cache', 'transformers');
+
       this.embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
       console.log('Model loaded successfully!');
     }
