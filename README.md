@@ -112,7 +112,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 3. **Chat**: Once processing is complete, click on the website card to start chatting
 4. **Ask Questions**: Ask questions about the website content and get AI-powered answers
 
-For a detailed explanation of how RAG works and the technical architecture, check out the blog post: [Building an Open-Source RAG System](https://elimbi.com)
+For a detailed explanation of how RAG works and the technical architecture, check out the blog post: [Building an Open-Source RAG System](https://elimbi.com/posts/building-open-source-rag)
 
 ## License
 
