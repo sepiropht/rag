@@ -25,9 +25,9 @@ An open-source Retrieval-Augmented Generation (RAG) system that allows you to ch
 - Node.js 18+ or Bun (for local development)
 - OpenRouter API key - Get one free at [https://openrouter.ai/](https://openrouter.ai/)
 
-## Quick Start (Docker)
+## Getting Started
 
-The fastest way to try the project:
+### Docker (Recommended)
 
 ```bash
 # Clone the repo
@@ -58,40 +58,7 @@ docker compose down
 docker compose up -d --build
 ```
 
-## Getting Started
-
-### Option 1: Docker (Recommended)
-
-1. **Clone the repository**
-
-```bash
-git clone <your-repo-url>
-cd rag-open-source
-```
-
-2. **Set up environment variables**
-
-```bash
-cp .env.example .env
-```
-
-Edit `.env` and add your [OpenRouter API key](https://openrouter.ai/):
-
-```env
-OPENROUTER_API_KEY=your_openrouter_api_key_here
-```
-
-3. **Run with Docker Compose**
-
-```bash
-docker compose up -d
-```
-
-The application will be available at [http://localhost:3000](http://localhost:3000).
-
-The database and transformer models cache are persisted in volumes, so your data will be preserved between restarts.
-
-### Option 2: Local Development
+### Local Development
 
 1. **Clone the repository**
 
