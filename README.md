@@ -1,4 +1,4 @@
-# RAG Open Source
+# RAG
 
 An open-source Retrieval-Augmented Generation (RAG) system that allows you to chat with any website using AI.
 
