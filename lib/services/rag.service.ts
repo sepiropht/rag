@@ -62,32 +62,35 @@ export class RAGService {
   }
 
   /**
-   * Generate embeddings using OpenAI
+   * Generate embeddings using OpenRouter
    */
   static async generateEmbeddings(chunks: ContentChunk[]): Promise<EmbeddedChunk[]> {
     const embeddedChunks: EmbeddedChunk[] = [];
 
     console.log(`Generating embeddings for ${chunks.length} chunks...`);
 
-    // Process chunks in batches
-    const batchSize = 100; // OpenAI allows up to 2048 inputs per request
-    for (let i = 0; i < chunks.length; i += batchSize) {
-      const batch = chunks.slice(i, i + batchSize);
-      const texts = batch.map(chunk => chunk.content);
+    // Process chunks one by one (OpenRouter doesn't support batch embeddings the same way)
+    for (let i = 0; i < chunks.length; i++) {
+      const chunk = chunks[i];
 
-      const response = await openai.embeddings.create({
-        model: 'openai/text-embedding-3-small',
-        input: texts,
-      });
-
-      for (let j = 0; j < batch.length; j++) {
-        embeddedChunks.push({
-          ...batch[j],
-          embedding: response.data[j].embedding,
+      try {
+        const response = await openai.embeddings.create({
+          model: 'openai/text-embedding-3-small',
+          input: chunk.content,
         });
-      }
 
-      console.log(`Processed ${Math.min(i + batchSize, chunks.length)}/${chunks.length} chunks`);
+        embeddedChunks.push({
+          ...chunk,
+          embedding: response.data[0].embedding,
+        });
+
+        if ((i + 1) % 10 === 0 || i === chunks.length - 1) {
+          console.log(`Processed ${i + 1}/${chunks.length} chunks`);
+        }
+      } catch (error) {
+        console.error(`Error generating embedding for chunk ${i}:`, error);
+        throw error;
+      }
     }
 
     console.log('All embeddings generated successfully!');
