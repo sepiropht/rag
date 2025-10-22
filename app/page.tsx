@@ -126,8 +126,7 @@ export default function Home() {
               {websites.map((website) => (
                 <div
                   key={website.id}
-                  onClick={() => router.push(`/chat/${website.id}`)}
-                  className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 cursor-pointer hover:shadow-xl transition-shadow"
+                  className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow"
                 >
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="text-lg font-semibold text-gray-800 dark:text-white line-clamp-1">
@@ -156,14 +155,24 @@ export default function Home() {
                     href={website.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
-                    className="text-sm text-blue-600 dark:text-blue-400 hover:underline truncate block"
+                    className="text-sm text-blue-600 dark:text-blue-400 hover:underline truncate block mb-3"
                   >
                     {website.url}
                   </a>
-                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                  <p className="text-xs text-gray-500 dark:text-gray-500 mb-4">
                     Added {new Date(website.createdAt).toLocaleDateString()}
                   </p>
+                  <button
+                    onClick={() => router.push(`/chat/${website.id}`)}
+                    disabled={website.status !== 'completed'}
+                    className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
+                      website.status === 'completed'
+                        ? 'bg-blue-600 text-white hover:bg-blue-700'
+                        : 'bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-700 dark:text-gray-400'
+                    }`}
+                  >
+                    {website.status === 'completed' ? 'Start Chat' : `Status: ${website.status}`}
+                  </button>
                 </div>
               ))}
             </div>
