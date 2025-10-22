@@ -93,7 +93,7 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-center mb-2 text-gray-800 dark:text-white">
-          RAG Open Source
+          RAG
         </h1>
         <p className="text-center text-gray-600 dark:text-gray-300 mb-8">
           Chat with any website using AI-powered RAG
