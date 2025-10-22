@@ -6,7 +6,7 @@ An open-source Retrieval-Augmented Generation (RAG) system that allows you to ch
 
 - **Website Scraping**: Automatically scrapes and processes website content
 - **Intelligent Chunking**: Adapts chunking strategy based on website type (blog, documentation, e-commerce, etc.)
-- **Vector Search**: Uses OpenAI embeddings for semantic search
+- **Vector Search**: Uses OpenRouter with OpenAI embeddings for semantic search
 - **Chat Interface**: Clean, modern UI for chatting with website content
 - **No Authentication**: Simple, ready-to-use setup
 
@@ -14,14 +14,14 @@ An open-source Retrieval-Augmented Generation (RAG) system that allows you to ch
 
 - **Next.js 15** - React framework
 - **Prisma** - Database ORM (SQLite)
-- **OpenAI** - Embeddings and chat completion
+- **OpenRouter** - API gateway for AI models (OpenAI embeddings + Claude 3.5 Sonnet)
 - **Puppeteer** - Website scraping
 - **Tailwind CSS** - Styling
 
 ## Prerequisites
 
 - Node.js 18+ or Bun
-- OpenAI API key
+- OpenRouter API key (get one at https://openrouter.ai/)
 
 ## Getting Started
 
@@ -45,7 +45,7 @@ npm install
 Create a `.env` file in the root directory:
 
 ```env
-OPENAI_API_KEY=your_openai_api_key_here
+OPENROUTER_API_KEY=your_openrouter_api_key_here
 DATABASE_URL="file:./dev.db"
 ```
 
@@ -148,15 +148,15 @@ respectBoundaries: 'paragraph' | 'section' | 'heading' | 'page'
 Change the embedding model in `rag.service.ts`:
 
 ```typescript
-model: 'text-embedding-3-small'  // Or 'text-embedding-3-large'
+model: 'openai/text-embedding-3-small'  // Or 'openai/text-embedding-3-large'
 ```
 
 ### Chat Model
 
-Change the chat model in `rag.service.ts`:
+Change the chat model in `rag.service.ts` (all OpenRouter models available):
 
 ```typescript
-model: 'gpt-4o-mini'  // Or 'gpt-4', 'gpt-3.5-turbo'
+model: 'anthropic/claude-3.5-sonnet'  // Or 'openai/gpt-4o', 'google/gemini-pro', etc.
 ```
 
 ## Limitations

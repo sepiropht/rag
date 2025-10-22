@@ -3,8 +3,10 @@ import OpenAI from 'openai';
 import { ChunkingStrategy } from './site-detector.service';
 import { AdaptiveChunkerService } from './adaptive-chunker.service';
 
+// Use OpenRouter for both embeddings and chat
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENROUTER_API_KEY,
+  baseURL: 'https://openrouter.ai/api/v1',
 });
 
 export interface ContentChunk {
@@ -74,7 +76,7 @@ export class RAGService {
       const texts = batch.map(chunk => chunk.content);
 
       const response = await openai.embeddings.create({
-        model: 'text-embedding-3-small',
+        model: 'openai/text-embedding-3-small',
         input: texts,
       });
 
@@ -97,7 +99,7 @@ export class RAGService {
    */
   static async createEmbedding(text: string): Promise<number[]> {
     const response = await openai.embeddings.create({
-      model: 'text-embedding-3-small',
+      model: 'openai/text-embedding-3-small',
       input: text,
     });
 
@@ -239,7 +241,7 @@ export class RAGService {
     ];
 
     const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'anthropic/claude-3.5-sonnet',
       messages,
     });
 
