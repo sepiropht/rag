@@ -4,12 +4,14 @@ import { RAGService } from '@/lib/services/rag.service';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { websiteId: string } }
+  { params }: { params: Promise<{ websiteId: string }> }
 ) {
   try {
+    const { websiteId } = await params;
+
     // Get or create default chat for this website
     let chat = await prisma.websiteChat.findFirst({
-      where: { websiteId: params.websiteId },
+      where: { websiteId },
       include: {
         messages: {
           orderBy: { createdAt: 'asc' },
@@ -20,7 +22,7 @@ export async function GET(
     if (!chat) {
       chat = await prisma.websiteChat.create({
         data: {
-          websiteId: params.websiteId,
+          websiteId,
           title: 'Default Chat',
         },
         include: {
@@ -38,9 +40,10 @@ export async function GET(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { websiteId: string } }
+  { params }: { params: Promise<{ websiteId: string }> }
 ) {
   try {
+    const { websiteId } = await params;
     const { message } = await request.json();
 
     if (!message || !message.trim()) {
@@ -49,7 +52,7 @@ export async function POST(
 
     // Check if website exists and is completed
     const website = await prisma.website.findUnique({
-      where: { id: params.websiteId },
+      where: { id: websiteId },
     });
 
     if (!website) {
@@ -65,7 +68,7 @@ export async function POST(
 
     // Get or create default chat
     let chat = await prisma.websiteChat.findFirst({
-      where: { websiteId: params.websiteId },
+      where: { websiteId },
       include: {
         messages: {
           orderBy: { createdAt: 'asc' },
@@ -76,7 +79,7 @@ export async function POST(
     if (!chat) {
       chat = await prisma.websiteChat.create({
         data: {
-          websiteId: params.websiteId,
+          websiteId,
           title: 'Default Chat',
         },
         include: {
@@ -102,7 +105,7 @@ export async function POST(
 
     // Generate AI response using RAG
     const aiResponse = await RAGService.generateResponse(
-      params.websiteId,
+      websiteId,
       message,
       chatHistory
     );
