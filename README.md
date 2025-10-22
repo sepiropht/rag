@@ -15,7 +15,7 @@ An open-source Retrieval-Augmented Generation (RAG) system that allows you to ch
 - **Next.js 15** - React framework
 - **Prisma** - Database ORM (SQLite)
 - **Transformers.js** - Local ML embeddings (all-MiniLM-L6-v2)
-- **OpenRouter** - Chat completions (Claude 3.5 Sonnet)
+- **OpenRouter** - Chat completions (Llama 3.2 3B - Free tier)
 - **Puppeteer** - Website scraping
 - **Tailwind CSS** - Styling
 
@@ -160,7 +160,8 @@ Note: Embeddings run locally using Transformers.js - no API key needed!
 Change the chat model in `rag.service.ts` (all OpenRouter models available):
 
 ```typescript
-model: 'anthropic/claude-3.5-sonnet'  // Or 'openai/gpt-4o', 'google/gemini-pro', etc.
+model: 'meta-llama/llama-3.2-3b-instruct:free'  // Free model
+// Or use paid models: 'anthropic/claude-3.5-sonnet', 'openai/gpt-4o', etc.
 ```
 
 ## Limitations

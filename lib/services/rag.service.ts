@@ -265,7 +265,7 @@ export class RAGService {
     ];
 
     const response = await openRouterChat.chat.completions.create({
-      model: 'anthropic/claude-3.5-sonnet',
+      model: 'meta-llama/llama-3.2-3b-instruct:free',
       messages,
     });
 
