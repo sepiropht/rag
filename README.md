@@ -6,7 +6,7 @@ An open-source Retrieval-Augmented Generation (RAG) system that allows you to ch
 
 - **Website Scraping**: Automatically scrapes and processes website content
 - **Intelligent Chunking**: Adapts chunking strategy based on website type (blog, documentation, e-commerce, etc.)
-- **Vector Search**: Uses OpenAI embeddings for semantic search
+- **Vector Search**: Uses local sentence-transformers for embeddings (no API key needed!)
 - **Chat Interface**: Clean, modern UI for chatting with website content
 - **No Authentication**: Simple, ready-to-use setup
 
@@ -14,7 +14,7 @@ An open-source Retrieval-Augmented Generation (RAG) system that allows you to ch
 
 - **Next.js 15** - React framework
 - **Prisma** - Database ORM (SQLite)
-- **OpenAI** - Text embeddings (text-embedding-3-small)
+- **Transformers.js** - Local ML embeddings (all-MiniLM-L6-v2)
 - **OpenRouter** - Chat completions (Claude 3.5 Sonnet)
 - **Puppeteer** - Website scraping
 - **Tailwind CSS** - Styling
@@ -22,7 +22,6 @@ An open-source Retrieval-Augmented Generation (RAG) system that allows you to ch
 ## Prerequisites
 
 - Node.js 18+ or Bun
-- OpenAI API key (get one at https://platform.openai.com/api-keys)
 - OpenRouter API key (get one at https://openrouter.ai/)
 
 ## Getting Started
@@ -48,7 +47,6 @@ Create a `.env` file in the root directory:
 
 ```env
 OPENROUTER_API_KEY=your_openrouter_api_key_here
-OPENAI_API_KEY=your_openai_api_key_here
 DATABASE_URL="file:./dev.db"
 ```
 
@@ -151,10 +149,11 @@ respectBoundaries: 'paragraph' | 'section' | 'heading' | 'page'
 Change the embedding model in `rag.service.ts`:
 
 ```typescript
-model: 'text-embedding-3-small'  // Or 'text-embedding-3-large'
+this.embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+// Or use other sentence-transformers models from Hugging Face
 ```
 
-Note: Embeddings use OpenAI API directly.
+Note: Embeddings run locally using Transformers.js - no API key needed!
 
 ### Chat Model
 

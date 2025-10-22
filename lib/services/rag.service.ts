@@ -1,12 +1,14 @@
 import prisma from '../prisma';
 import OpenAI from 'openai';
+import { pipeline, env } from '@xenova/transformers';
+import * as path from 'path';
 import { ChunkingStrategy } from './site-detector.service';
 import { AdaptiveChunkerService } from './adaptive-chunker.service';
 
-// Use OpenAI directly for embeddings (OpenRouter doesn't support embeddings API)
-const openaiEmbeddings = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Configure transformers to use local cache
+env.allowLocalModels = false;
+env.useBrowserCache = false;
+env.cacheDir = path.join(process.cwd(), '.cache', 'transformers');
 
 // Use OpenRouter for chat completions
 const openRouterChat = new OpenAI({
@@ -31,6 +33,20 @@ export interface EmbeddedChunk extends ContentChunk {
 }
 
 export class RAGService {
+  private static embedder: any = null;
+
+  /**
+   * Initialize the sentence-transformers embedding model
+   */
+  static async initEmbedder() {
+    if (!this.embedder) {
+      console.log('Loading sentence-transformers model (all-MiniLM-L6-v2)...');
+      this.embedder = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
+      console.log('Model loaded successfully!');
+    }
+    return this.embedder;
+  }
+
   /**
    * Split text into chunks with overlap
    */
@@ -67,34 +83,29 @@ export class RAGService {
   }
 
   /**
-   * Generate embeddings using OpenRouter
+   * Generate embeddings using sentence-transformers (locally)
    */
   static async generateEmbeddings(chunks: ContentChunk[]): Promise<EmbeddedChunk[]> {
+    await this.initEmbedder();
     const embeddedChunks: EmbeddedChunk[] = [];
 
     console.log(`Generating embeddings for ${chunks.length} chunks...`);
 
-    // Process chunks one by one (OpenRouter doesn't support batch embeddings the same way)
-    for (let i = 0; i < chunks.length; i++) {
-      const chunk = chunks[i];
+    // Process chunks in batches for better performance
+    const batchSize = 10;
+    for (let i = 0; i < chunks.length; i += batchSize) {
+      const batch = chunks.slice(i, i + batchSize);
 
-      try {
-        const response = await openaiEmbeddings.embeddings.create({
-          model: 'text-embedding-3-small',
-          input: chunk.content,
-        });
-
+      for (const chunk of batch) {
+        const embedding = await this.createEmbedding(chunk.content);
         embeddedChunks.push({
           ...chunk,
-          embedding: response.data[0].embedding,
+          embedding,
         });
+      }
 
-        if ((i + 1) % 10 === 0 || i === chunks.length - 1) {
-          console.log(`Processed ${i + 1}/${chunks.length} chunks`);
-        }
-      } catch (error) {
-        console.error(`Error generating embedding for chunk ${i}:`, error);
-        throw error;
+      if ((i + batchSize) % 50 === 0) {
+        console.log(`Processed ${Math.min(i + batchSize, chunks.length)}/${chunks.length} chunks`);
       }
     }
 
@@ -103,15 +114,20 @@ export class RAGService {
   }
 
   /**
-   * Create embedding for a single text using OpenAI
+   * Create embedding for a single text using sentence-transformers
+   * Uses all-MiniLM-L6-v2 which produces 384-dimensional vectors
    */
   static async createEmbedding(text: string): Promise<number[]> {
-    const response = await openaiEmbeddings.embeddings.create({
-      model: 'text-embedding-3-small',
-      input: text,
+    await this.initEmbedder();
+
+    // Generate embedding using the model
+    const output = await this.embedder(text, {
+      pooling: 'mean',
+      normalize: true,
     });
 
-    return response.data[0].embedding;
+    // Convert to regular array
+    return Array.from(output.data);
   }
 
   /**
