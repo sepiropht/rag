@@ -31,8 +31,8 @@ An open-source Retrieval-Augmented Generation (RAG) system that allows you to ch
 
 ```bash
 # Clone the repo
-git clone <your-repo-url>
-cd rag-open-source
+git clone https://github.com/sepiropht/rag.git
+cd rag
 
 # Set up your API key
 cp .env.example .env
@@ -63,8 +63,8 @@ docker compose up -d --build
 1. **Clone the repository**
 
 ```bash
-git clone <your-repo-url>
-cd rag-open-source
+git clone https://github.com/sepiropht/rag.git
+cd rag
 ```
 
 2. **Install dependencies**
